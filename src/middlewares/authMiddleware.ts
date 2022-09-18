@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-import userService from "../services/userService.js";
+import * as userService from "../services/userService.js";
 import { unauthorizedError } from "../utils/errorUtils.js";
 
 export async function ensureAuthenticatedMiddleware(
@@ -20,7 +20,7 @@ export async function ensureAuthenticatedMiddleware(
   try {
     const JWT_SECRET = process.env.JWT_SECRET;
     const { userId } = jwt.verify(token, JWT_SECRET) as { userId: number };
-    const user = await userService.findUserById(userId);
+    const user = await userService.findById(userId);
     res.locals.user = user;
     next();
   } catch {
