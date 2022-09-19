@@ -3,7 +3,6 @@ import * as disciplineService from "../services/disciplineService.js";
 import * as teacherDisciplineService from "../services/teacherDisciplineService.js";
 import * as teacherService from "../services/teacherService.js";
 import * as testRepository from "../repositories/testRepository.js";
-import * as termRepository from "../repositories/termRepository.js";
 import { TypeTestData } from "../types/TypeTestData.js";
 import { notFoundError } from "../utils/errorUtils.js";
 
@@ -42,6 +41,63 @@ export async function createTest(body: any) {
   await testRepository.insert(test);
 }
 
-export async function getAllTests() {
-  return termRepository.getAll();
+export async function getTestsByDiscipline() {
+  const tests = await testRepository.getTestsByDiscipline();
+  return tests.map((term) => {
+    return {
+      ...term,
+      disciplines: term.disciplines.map((discipline) => {
+        return {
+          id: discipline.id,
+          name: discipline.name,
+          categories: discipline.teachersDisciplines.map((categories) => {
+            return categories.test.map((category) => {
+              return {
+                id: category.category.id,
+                name: category.category.name,
+                tests: category.category.tests.map((tests) => {
+                  return {
+                    id: tests.id,
+                    name: tests.name,
+                    pdfUrl: tests.pdfUrl,
+                    teacher: tests.teacherDiscipline.teacher,
+                  };
+                }),
+              };
+            });
+          }),
+        };
+      }),
+    };
+  });
+}
+
+export async function getTestByTeacher() {
+  const tests = await testRepository.getTestByTeacher();
+  return tests.map((teachers) => {
+    return {
+      id: teachers.teacher.id,
+      name: teachers.teacher.name,
+      categories: teachers.teacher.teachersDisciplines.map((categories) => {
+        return categories.test.map((category) => {
+          return {
+            id: category.category.id,
+            name: category.category.name,
+            tests: {
+              id: category.id,
+              name: category.name,
+              pdfUrl: category.pdfUrl,
+              discipline: category.category.tests.map((discipline) => {
+                return {
+                  id: discipline.id,
+                  name: discipline.name,
+                  terms: discipline.teacherDiscipline.discipline.term,
+                };
+              }),
+            },
+          };
+        });
+      }),
+    };
+  });
 }
