@@ -1,7 +1,7 @@
 import { prisma } from "../config/database.js";
 
-export async function findById(id: number) {
-  return prisma.category.findUnique({ where: { id } });
+export async function findIdByName(name: string) {
+  return prisma.category.findFirst({ where: { name }, select: { id: true } });
 }
 
 export async function findCategories() {
