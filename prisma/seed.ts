@@ -56,41 +56,16 @@ async function main() {
     });
   });
 
-  const teacherDisciplines = [
-    { teacherId: 1, disciplineId: 1 },
-    { teacherId: 1, disciplineId: 2 },
-    { teacherId: 1, disciplineId: 3 },
-    { teacherId: 2, disciplineId: 4 },
-    { teacherId: 2, disciplineId: 5 },
-    { teacherId: 2, disciplineId: 6 },
-  ];
   await prisma.teacherDiscipline.createMany({
-    data: teacherDisciplines,
-  });
-
-  const tests = [
-    {
-      name: "Projeto Manual",
-      pdfUrl: "https://www.youtube.com/watch?v=A8z7z1vogpY",
-      categoryId: 1,
-      teacherDisciplineId: 1,
-    },
-    {
-      name: "Projeto Xablau",
-      pdfUrl: "https://www.youtube.com/watch?v=D-OhzQyr27g",
-      categoryId: 1,
-      teacherDisciplineId: 2,
-    },
-    {
-      name: "Projeto Tridente",
-      pdfUrl: "https://www.youtube.com/watch?v=HA2B13yBP8Y",
-      categoryId: 2,
-      teacherDisciplineId: 2,
-    },
-  ];
-
-  await prisma.test.createMany({
-    data: tests,
+    data: [
+      { teacherId: 1, disciplineId: 1 },
+      { teacherId: 1, disciplineId: 2 },
+      { teacherId: 1, disciplineId: 3 },
+      { teacherId: 2, disciplineId: 4 },
+      { teacherId: 2, disciplineId: 5 },
+      { teacherId: 2, disciplineId: 6 },
+    ],
+    skipDuplicates: true,
   });
 }
 
