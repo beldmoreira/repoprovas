@@ -1,8 +1,33 @@
+import bcrypt from "bcrypt";
 import { faker } from "@faker-js/faker";
+import { prisma } from "../../src/config/database.js";
 
-export default async function userFactory() {
+function createLogin(email = "beld@gmail.com", passwordLength = 10) {
   return {
-    email: faker.internet.email(),
-    password: faker.internet.password(10),
+    email,
+    password: faker.internet.password(passwordLength),
   };
 }
+
+interface Login {
+  email: string;
+  password: string;
+}
+
+async function createUser(login: Login) {
+  const user = await prisma.user.create({
+    data: {
+      email: login.email,
+      password: bcrypt.hashSync(login.password, 12),
+    },
+  });
+
+  return { ...user, plainPassword: login.password };
+}
+
+const userFactory = {
+  createLogin,
+  createUser,
+};
+
+export default userFactory;
